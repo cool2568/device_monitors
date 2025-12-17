@@ -7,7 +7,8 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from .pagination import DevicePagination
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permission import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .permissions import IsStaffForWrite
 
 
 from .models import Device
@@ -44,11 +45,7 @@ class DeviceListAPIView(ListCreateAPIView):
 
 class DeviceUpdateAPIView(RetrieveUpdateAPIView):
     queryset = Device.objects.all()
-
-    def get_permissions(self):
-        if self.request.method =="PATCH":
-            return(IsAdminUser())
-        return[IsAuthenticated()]
+    permission_class =[IsStaffForWrite]
     def get_serializer_class(self):
         if self.request.method == "PATCH":
             return DeviceUpdateSerializer
